@@ -5,15 +5,15 @@ use std::path::{Path, PathBuf};
 use filetime::FileTime;
 use git2;
 use glob::Pattern;
-use ignore::Match;
 use ignore::gitignore::GitignoreBuilder;
+use ignore::Match;
 
-use core::{Dependency, Package, PackageId, Source, SourceId, Summary};
 use core::source::MaybePackage;
+use core::{Dependency, Package, PackageId, Source, SourceId, Summary};
 use ops;
-use util::{self, internal, CargoResult};
 use util::paths;
 use util::Config;
+use util::{self, internal, CargoResult};
 
 pub struct PathSource<'cfg> {
     source_id: SourceId,
@@ -127,13 +127,15 @@ impl<'cfg> PathSource<'cfg> {
                 .map_err(|e| format_err!("could not parse glob pattern `{}`: {}", p, e))
         };
 
-        let glob_exclude = pkg.manifest()
+        let glob_exclude = pkg
+            .manifest()
             .exclude()
             .iter()
             .map(|p| glob_parse(p))
             .collect::<Result<Vec<_>, _>>()?;
 
-        let glob_include = pkg.manifest()
+        let glob_include = pkg
+            .manifest()
             .include()
             .iter()
             .map(|p| glob_parse(p))
@@ -302,7 +304,8 @@ impl<'cfg> PathSource<'cfg> {
     ) -> CargoResult<Vec<PathBuf>> {
         warn!("list_files_git {}", pkg.package_id());
         let index = repo.index()?;
-        let root = repo.workdir()
+        let root = repo
+            .workdir()
             .ok_or_else(|| internal("Can't list files on a bare repository."))?;
         let pkg_path = pkg.root();
 
@@ -374,7 +377,8 @@ impl<'cfg> PathSource<'cfg> {
             if is_dir.unwrap_or_else(|| file_path.is_dir()) {
                 warn!("  found submodule {}", file_path.display());
                 let rel = util::without_prefix(&file_path, root).unwrap();
-                let rel = rel.to_str()
+                let rel = rel
+                    .to_str()
                     .ok_or_else(|| format_err!("invalid utf-8 filename: {}", rel.display()))?;
                 // Git submodules are currently only named through `/` path
                 // separators, explicitly not `\` which windows uses. Who knew?
@@ -398,8 +402,8 @@ impl<'cfg> PathSource<'cfg> {
 
         #[cfg(unix)]
         fn join(path: &Path, data: &[u8]) -> CargoResult<PathBuf> {
-            use std::os::unix::prelude::*;
             use std::ffi::OsStr;
+            use std::os::unix::prelude::*;
             Ok(path.join(<OsStr as OsStrExt>::from_bytes(data)))
         }
         #[cfg(windows)]
