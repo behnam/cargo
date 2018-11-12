@@ -103,14 +103,15 @@ impl<'cfg> PathSource<'cfg> {
     /// stages are:
     ///
     /// 1) Only warn users about the future change iff their matching rules are
-    ///    affected.  (CURRENT STAGE)
+    ///    affected.
     ///
     /// 2) Switch to the new strategy and update documents. Still keep warning
-    ///    affected users.
+    ///    affected users.  (CURRENT STAGE)
     ///
     /// 3) Drop the old strategy and no more warnings.
     ///
     /// See <https://github.com/rust-lang/cargo/issues/4268> for more info.
+    // TODO: Drop glob-related code for Stage 3..
     pub fn list_files(&self, pkg: &Package) -> CargoResult<Vec<PathBuf>> {
         let root = pkg.root();
         let no_include_option = pkg.manifest().include().is_empty();
@@ -208,38 +209,41 @@ impl<'cfg> PathSource<'cfg> {
                 if glob_should_package {
                     if no_include_option {
                         self.config.shell().warn(format!(
-                            "Pattern matching for Cargo's include/exclude fields is changing and \
-                             file `{}` WILL be excluded in a future Cargo version.\n\
+                            "Pattern matching for Cargo's include/exclude fields has changed and \
+                             file `{}` is NOW excluded, but USED TO be NOT excluded in a \
+                             previous Cargo version.\n\
                              See https://github.com/rust-lang/cargo/issues/4268 for more info",
                             relative_path.display()
                         ))?;
                     } else {
                         self.config.shell().warn(format!(
-                            "Pattern matching for Cargo's include/exclude fields is changing and \
-                             file `{}` WILL NOT be included in a future Cargo version.\n\
+                            "Pattern matching for Cargo's include/exclude fields has changed and \
+                             file `{}` is NOT included anymore, but USED TO be included in a \
+                             previous Cargo version.\n\
                              See https://github.com/rust-lang/cargo/issues/4268 for more info",
                             relative_path.display()
                         ))?;
                     }
                 } else if no_include_option {
                     self.config.shell().warn(format!(
-                        "Pattern matching for Cargo's include/exclude fields is changing and \
-                         file `{}` WILL NOT be excluded in a future Cargo version.\n\
+                        "Pattern matching for Cargo's include/exclude fields has changed and \
+                         file `{}` is NOW NOT excluded, but USED TO be excluded in a \
+                         previous Cargo version.\n\
                          See https://github.com/rust-lang/cargo/issues/4268 for more info",
                         relative_path.display()
                     ))?;
                 } else {
                     self.config.shell().warn(format!(
-                        "Pattern matching for Cargo's include/exclude fields is changing and \
-                         file `{}` WILL be included in a future Cargo version.\n\
+                        "Pattern matching for Cargo's include/exclude fields has changed and \
+                         file `{}` is NOW included, but USED TO be NOT included in a \
+                         previous Cargo version.\n\
                          See https://github.com/rust-lang/cargo/issues/4268 for more info",
                         relative_path.display()
                     ))?;
                 }
             }
 
-            // Update to ignore_should_package for Stage 2
-            Ok(glob_should_package)
+            Ok(ignore_should_package)
         };
 
         // attempt git-prepopulate only if no `include` (rust-lang/cargo#4135)

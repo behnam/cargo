@@ -316,7 +316,7 @@ fn exclude() {
                 "*.txt",
                 # file in root
                 "file_root_1",       # NO_CHANGE (ignored)
-                "/file_root_2",      # CHANGING (packaged -> ignored)
+                "/file_root_2",      # NO_CHANGE (ignored)
                 "file_root_3/",      # NO_CHANGE (packaged)
                 "file_root_4/*",     # NO_CHANGE (packaged)
                 "file_root_5/**",    # NO_CHANGE (packaged)
@@ -377,17 +377,17 @@ fn exclude() {
             "\
 [WARNING] manifest has no description[..]
 See http://doc.crates.io/manifest.html#package-metadata for more info.
-[WARNING] [..] file `dir_root_1/some_dir/file` WILL be excluded [..]
+[WARNING] [..] file `dir_root_1/some_dir/file` is NOW excluded [..]
 See [..]
-[WARNING] [..] file `dir_root_2/some_dir/file` WILL be excluded [..]
+[WARNING] [..] file `dir_root_2/some_dir/file` is NOW excluded [..]
 See [..]
-[WARNING] [..] file `dir_root_3/some_dir/file` WILL be excluded [..]
+[WARNING] [..] file `dir_root_3/some_dir/file` is NOW excluded [..]
 See [..]
-[WARNING] [..] file `some_dir/dir_deep_1/some_dir/file` WILL be excluded [..]
+[WARNING] [..] file `some_dir/dir_deep_1/some_dir/file` is NOW excluded [..]
 See [..]
-[WARNING] [..] file `some_dir/dir_deep_3/some_dir/file` WILL be excluded [..]
+[WARNING] [..] file `some_dir/dir_deep_3/some_dir/file` is NOW excluded [..]
 See [..]
-[WARNING] [..] file `some_dir/file_deep_1` WILL be excluded [..]
+[WARNING] [..] file `some_dir/file_deep_1` is NOW excluded [..]
 See [..]
 [PACKAGING] foo v0.0.1 ([..])
 [ARCHIVING] [..]
@@ -421,18 +421,10 @@ See [..]
             "\
 .cargo_vcs_info.json
 Cargo.toml
-dir_root_1/some_dir/file
-dir_root_2/some_dir/file
-dir_root_3/some_dir/file
 file_root_3
 file_root_4
 file_root_5
-some_dir/dir_deep_1/some_dir/file
 some_dir/dir_deep_2/some_dir/file
-some_dir/dir_deep_3/some_dir/file
-some_dir/dir_deep_4/some_dir/file
-some_dir/dir_deep_5/some_dir/file
-some_dir/file_deep_1
 some_dir/file_deep_2
 some_dir/file_deep_3
 some_dir/file_deep_4
